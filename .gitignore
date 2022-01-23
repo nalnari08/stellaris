@@ -1,2 +1,4 @@
 *.yml
 translate.exe
+config.ini
+YmlConvertSupporter.py
