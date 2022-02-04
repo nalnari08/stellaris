@@ -9,27 +9,24 @@ from YmlConvertSupporter import YmlConvertSupporter
 
 
 def getdict(i):
+    if not os.path.exists(i):
+        print(i + 'dosen\'t exists')
+    f = ''
     try:
-        if not os.path.exists(i):
-            print(i + 'dosen\'t exists')
-        f = ''
-        try:
-            f = (open(i, 'r', encoding='utf-8-sig'))
-        except:
-            f = (open(i, 'r', encoding='utf-8'))
-        dat = f.read().splitlines()
-        f.close()
-        da_dict = {}
-        for x in dat:
-            try:
-                v = x.split('=', 1)
-                da_dict[v[0]] = x
-            except:
-                print(Exception)
-        return da_dict
+        f = (open(i, 'r', encoding='utf-8-sig'))
     except:
-        print(i + '변환 중 오류')
-        raise Exception
+        f = (open(i, 'r', encoding='utf-8'))
+    dat = f.read().splitlines()
+    f.close()
+    da_dict = {}
+    for x in dat:
+        try:
+            v = x.split('=', 1)
+            da_dict[v[0]] = x
+        except:
+            print(Exception)
+    return da_dict
+
 
 if __name__ == "__main__":
     cwd = os.getcwd() + '/'
@@ -39,32 +36,19 @@ if __name__ == "__main__":
     shutil.rmtree(cwd + 'temp', ignore_errors=True)
     shutil.rmtree(cwd + 'localisation/english', ignore_errors=True)
     if os.path.exists('ko') and os.path.exists('en'):
-        print('skiping download')
+        print('OK, Now Working, Please wait')
         skip = True
-    if not skip:
-        shutil.rmtree(cwd + 'en', ignore_errors=True)
-        shutil.rmtree(cwd + 'ko', ignore_errors=True)
-        print('downloading')
-        resp = urlopen("https://github.com/readingsnail/hoi4/archive/refs/heads/main.zip")
-        zipfile = ZipFile(BytesIO(resp.read()))
-        print('extracting')
-        zipfile.extractall(cwd + 'temp/')
-        if not (platform.system() == 'Windows'):
-            print('waiting..')
-            time.sleep(5)
-        shutil.move(cwd + 'temp/hoi4-main/en', cwd)
-        shutil.move(cwd + 'temp/hoi4-main/ko', cwd)
+    else:
+        print("There is not en and ko folder. terminating...")
+        time.sleep(5)
+        quit()
     print('working')
     shutil.rmtree(cwd + 'temp', ignore_errors=True)
     os.makedirs(cwd + 'localisation/english', exist_ok=True)
     os.makedirs(cwd + 'temp', exist_ok=True)
     root = cwd + 'en/'
     onlyfiles = [f for f in os.listdir(root) if os.path.isfile(os.path.join(root, f))]
-    fFiles = []
     for i in onlyfiles:
-        if ".properties" in i:
-            fFiles.append(i)
-    for i in fFiles:
         da = getdict(cwd + 'en/' + i)
         da.update(getdict(cwd + 'ko/' + i))
 
